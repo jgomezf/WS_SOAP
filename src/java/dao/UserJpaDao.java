@@ -65,4 +65,9 @@ public class UserJpaDao implements UserDAO, Serializable{
         }
         
     }    
+
+    @Override
+    public User GetById(Integer id) {
+        return em.find(User.class, id);
+    }
 }

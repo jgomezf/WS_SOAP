@@ -29,6 +29,7 @@ public class UserSW {
 
     /**
      * Web service operation
+     * @return 
      */
     @WebMethod(operationName = "Get")
     public List<User> Get() {
@@ -38,12 +39,23 @@ public class UserSW {
 
     /**
      * Web service operation
+     * @param user
      */
     @WebMethod(operationName = "Create")
     @Oneway
     public void Create(@WebParam(name = "user") User user) {
         userBean = new UserBean();
         userBean.create(user);
+    }
+
+    /**
+     * Web service operation
+     * @param id
+     */
+    @WebMethod(operationName = "GetById")
+    public User GetById(@WebParam(name = "id") Integer id) {
+        userBean = new UserBean();
+        return userBean.GetById(id);
     }
     
     

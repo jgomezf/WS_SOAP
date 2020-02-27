@@ -16,5 +16,7 @@ public interface UserDAO {
     
     List<User> Get();
     
+    User GetById(Integer id);
+    
     void create(User user);
 }

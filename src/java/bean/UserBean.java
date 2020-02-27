@@ -25,6 +25,10 @@ public class UserBean {
         return userDAO.Get();
     }
     
+    public User GetById(Integer id){
+        return userDAO.GetById(id);
+    }
+    
     public void create(User user){
         userDAO.create(user);
     }
