@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
@@ -69,5 +70,76 @@ public class UserJpaDao implements UserDAO, Serializable{
     @Override
     public User GetById(Integer id) {
         return em.find(User.class, id);
+    }
+
+    @Override
+    public User Edit(User user) {
+        try {
+            em.getTransaction().begin();
+            user = em.merge(user);
+            em.getTransaction().commit();
+        } catch (Exception ex) {
+            try {
+                em.getTransaction().rollback();
+            } catch (Exception re) {
+                try {
+                    throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
+                } catch (RollbackFailureException ex1) {
+                    Logger.getLogger(UserJpaDao.class.getName()).log(Level.SEVERE, null, ex1);
+                }
+            }
+            String msg = ex.getLocalizedMessage();
+            if (msg == null || msg.length() == 0) {
+                Integer id = user.getIduser();
+                if (this.GetById(id) == null) {
+                    try {
+                        throw new NonexistentEntityException("The user with id " + id + " no longer exists.");
+                    } catch (NonexistentEntityException ex1) {
+                        Logger.getLogger(UserJpaDao.class.getName()).log(Level.SEVERE, null, ex1);
+                    }                    
+                }
+            }
+            throw ex;
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
+        return user;
+    }
+
+    @Override
+    public void Delete(Integer id) {
+        try {
+            em.getTransaction().begin();            
+            User user;
+            try {
+                user = em.getReference(User.class, id);
+                user.getIduser();
+            } catch (EntityNotFoundException enfe) {
+                throw new NonexistentEntityException("The user with id " + id + " no longer exists.", enfe);
+            }
+            em.remove(user);
+            em.getTransaction().commit();
+        } catch (Exception ex) {
+            try {
+                em.getTransaction().rollback();
+            } catch (Exception re) {
+                try {
+                    throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
+                } catch (RollbackFailureException ex1) {
+                    Logger.getLogger(UserJpaDao.class.getName()).log(Level.SEVERE, null, ex1);
+                }
+            }
+            try {
+                throw ex;
+            } catch (Exception ex1) {
+                Logger.getLogger(UserJpaDao.class.getName()).log(Level.SEVERE, null, ex1);
+            }
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
     }
 }

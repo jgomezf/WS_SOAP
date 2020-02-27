@@ -33,4 +33,11 @@ public class UserBean {
         userDAO.create(user);
     }
     
+    public User Edit(User user){
+        return userDAO.Edit(user);
+    }
+    
+    public void Delete(Integer id){
+        userDAO.Delete(id);
+    }
 }

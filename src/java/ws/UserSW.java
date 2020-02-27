@@ -21,12 +21,7 @@ import javax.jws.WebParam;
 public class UserSW {
 
     private UserBean userBean;
-    
-    @WebMethod(operationName = "hello")
-    public String hello(@WebParam(name = "name") String txt) {
-        return "Hello " + txt + " !";
-    }
-
+        
     /**
      * Web service operation
      * @return 
@@ -56,6 +51,26 @@ public class UserSW {
     public User GetById(@WebParam(name = "id") Integer id) {
         userBean = new UserBean();
         return userBean.GetById(id);
+    }
+
+    /**
+     * Web service operation
+     * @param user
+     */
+    @WebMethod(operationName = "Edit")
+    public User Edit(@WebParam(name = "user") User user) {
+        userBean = new UserBean();
+        return userBean.Edit(user);
+    }
+
+    /**
+     * Web service operation
+     */
+    @WebMethod(operationName = "Delete")
+    @Oneway
+    public void Delete(@WebParam(name = "id") Integer id) {
+        userBean = new UserBean();
+        userBean.Delete(id);
     }
     
     
